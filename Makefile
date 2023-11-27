@@ -1,12 +1,15 @@
+DC := docker-compose
+DC_FLAGS := -f srcs/docker-compose.yml
+
 all: build up
 
 build:
-	docker-compose build
+	$(DC) $(DC_FLAGS) build
 
 down:
-	docker-compose down
+	$(DC) $(DC_FLAGS) down
 
 up:
-	docker-compose up -d
+	$(DC) $(DC_FLAGS) up -d
 
 .PHONY: all build down up
