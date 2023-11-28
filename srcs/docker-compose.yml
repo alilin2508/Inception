@@ -1,0 +1,18 @@
+services:
+  db:
+    build:
+      args:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+      context: ./requirements/mariadb
+    container_name: db
+    ports:
+      - 3306:3306
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
