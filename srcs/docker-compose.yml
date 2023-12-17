@@ -13,6 +13,70 @@ services:
     restart: always
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - inception
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+    container_name: wordpress
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - DB_NAME=${MYSQL_DATABASE}
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - WP_PATH=${WP_PATH}
+      - WP_ADMIN=${WP_ADMIN}
+      - WP_ADMIN_PASS=${WP_ADMIN_PASS}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_USER=${WP_USER}
+      - WP_USER_PASS=${WP_USER_PASS}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
+    depends_on:
+      - db
+    ports:
+      - 9000:9000
+    restart: always
+    volumes:
+      - wp_data:/var/www/html/wordpress
+    networks:
+      - inception
+  nginx:
+    build:
+      context: ./requirements/nginx
+      args:
+        COUNTRY: ${COUNTRY}
+        STATE: ${STATE}
+        LOCALITY: ${LOCALITY}
+        ORGANIZATION: ${ORGANIZATION}
+        ORG_UNIT: ${ORG_UNIT}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    container_name: nginx
+    depends_on:
+      - wordpress
+    ports:
+      - 443:443
+    restart: always
+    volumes:
+      - wp_data:/var/www/html/wordpress
+    networks:
+      - inception
 
 volumes:
   db_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/alice/data/mysql
+  wp_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/alice/data/wordpress
+
+networks:
+  inception:
+    # Use a custom driver
+    driver: bridge

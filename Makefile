@@ -1,4 +1,4 @@
-DC := docker-compose
+DC := docker compose
 DC_FLAGS := -f srcs/docker-compose.yml
 
 all: build up
